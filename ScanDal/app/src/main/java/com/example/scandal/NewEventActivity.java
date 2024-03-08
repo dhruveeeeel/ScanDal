@@ -1,6 +1,7 @@
 package com.example.scandal;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -34,16 +35,14 @@ public class NewEventActivity extends AppCompatActivity {
      */
     AppCompatButton savePromoCode;
     FrameLayout backButton;
-
+    // Assume QRCode is a class you have for generating and handling QR codes.
 
     /**
      * QRCode object for generating and handling QR codes.
      */
     QRCode QR;
     /**
-     *
-     * Called when the activity is starting. This is where most initialization should go:
-     * calling setContentView(int) to inflate the activity's UI, initializing objects, etc.
+     * Called when the activity is starting. Initializes a new event object and creates QRCodes for it.
      *
      * @param savedInstanceState If the activity is being re-initialized after previously being shut down
      *                           then this Bundle contains the data it most recently supplied in onSaveInstanceState(Bundle).
@@ -52,7 +51,7 @@ public class NewEventActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.events_created_page);
+        setContentView(R.layout.events_created_page); // Ensure this matches your layout file name
 
         // Initialize your components here
         backButton = findViewById(R.id.buttonBack_EventsCreatedPage);
@@ -65,14 +64,15 @@ public class NewEventActivity extends AppCompatActivity {
 
         String token = getIntent().getStringExtra("CheckinToken");
 
-        if (QR.generateQR(checkinQRCode, token)) {
-            checkinQRCode.setImageBitmap(QR.getQRPic());
+        // Example QR code generation and setting, replace with your actual methods
+        if (QR.generateQR(checkinQRCode, token)) { // Assuming generateQR returns a boolean
+            checkinQRCode.setImageBitmap(QR.getQRPic()); // Placeholder method, replace with your actual QR code bitmap
         } else {
             Log.e("NewEventActivity", "Checkin QR generation failed");
         }
         token = getIntent().getStringExtra("PromoToken");
-        if (QR.generateQR(promoQRCode, token)) {
-            promoQRCode.setImageBitmap(QR.getQRPic());
+        if (QR.generateQR(promoQRCode, token)) { // Assuming generateQR returns a boolean
+            promoQRCode.setImageBitmap(QR.getQRPic()); // Placeholder method, replace with your actual QR code bitmap
         } else {
             Log.e("NewEventActivity", "Promo QR generation failed");
         }

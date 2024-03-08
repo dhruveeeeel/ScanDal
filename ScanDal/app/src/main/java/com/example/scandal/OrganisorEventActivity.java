@@ -67,6 +67,9 @@ public class OrganisorEventActivity extends AppCompatActivity {
         loadEvents();
     }
 
+    /**
+     * Loads and displays events from firebase
+     */
     private void loadEvents() {
         List<String> eventNames = new ArrayList<>();
         ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, eventNames);
@@ -75,7 +78,7 @@ public class OrganisorEventActivity extends AppCompatActivity {
         db.collection("events").get().addOnCompleteListener(task -> {
             if (task.isSuccessful()) {
                 for (QueryDocumentSnapshot document : task.getResult()) {
-                    String eventName = document.getString("name");
+                    String eventName = document.getString("name"); // Assuming you have a 'name' field for event names
                     if (eventName != null) {
                         eventNames.add(eventName);
                     }
