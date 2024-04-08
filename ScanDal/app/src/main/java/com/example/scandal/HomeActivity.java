@@ -106,7 +106,7 @@ public class HomeActivity extends AppCompatActivity {
                     }
                 })
                 .addOnFailureListener(e -> Toast.makeText(getApplicationContext(), "Failed to fetch profile data", Toast.LENGTH_SHORT).show());
-
+        // goes to settings
         settings.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -114,6 +114,7 @@ public class HomeActivity extends AppCompatActivity {
                 startActivity(myintent);
             }
         });
+        // goes to event browser
         eventBrowser.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -121,8 +122,7 @@ public class HomeActivity extends AppCompatActivity {
                 startActivity(myintent);
             }
         });
-        //Log.e("hpeebles", "Inside HomeAct Before Attendee events");
-
+        //goes to Attendee events list
         attendeeEvents.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -131,22 +131,17 @@ public class HomeActivity extends AppCompatActivity {
             }
         });
         //Log.e("hpeebles", "Inside HomeAct After Attendee events");
-
+        //goes to scanner
         scan.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent myintent = new Intent(HomeActivity.this, QRCodeScanner.class);
-                myintent.putExtra("Activity", 1);
+                myintent.putExtra("Activity", 1); // sets the flag to indicate main activity
                 startActivity(myintent);
             }
         });
 
-//        scan.setOnClickListener(view -> {
-//            Intent myintent = new Intent(HomeActivity.this, QRCodeScanner.class);
-//            myintent.putExtra("Activity", 1);
-//            startActivity(myintent);
-//        });
-        //Log.e("hpeebles", "Inside HomeAct");
+        // goes to the profile page
         profile.setOnClickListener(view -> {
             Intent myintent = new Intent(HomeActivity.this, ProfileActivity.class);
             startActivity(myintent);
@@ -158,6 +153,12 @@ public class HomeActivity extends AppCompatActivity {
         });
 
     }
+
+    /**
+     * converts image string to bitmap
+     * @param imageString the string image being converted
+     * @return bitmap of the string
+     */
     private Bitmap convertImageStringToBitmap(String imageString) {
         try {
             byte[] decodedString = Base64.decode(imageString, Base64.DEFAULT);
@@ -169,7 +170,7 @@ public class HomeActivity extends AppCompatActivity {
     }
 
 
-    //Helper function to prompt user for admin password
+    //Helper method to prompt user for admin password
     private void showAdminPasswordDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("Enter Admin Pin");
