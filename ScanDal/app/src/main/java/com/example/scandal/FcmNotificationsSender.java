@@ -43,7 +43,6 @@ public class FcmNotificationsSender extends FirebaseMessagingService {
      * @param mContext     Context reference
      * @param mActivity    Activity reference
      */
-
     public FcmNotificationsSender(String userFcmToken, String title, String body, Context mContext, Activity mActivity) {
         this.userFcmToken = userFcmToken;
         this.title = title;

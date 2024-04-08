@@ -93,6 +93,7 @@ public class ConfirmationPage extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        // initializes UI components
         setContentView(R.layout.confirmation_page);
         String defaultText = "Do you want to ";
         yesButton = findViewById(R.id.confYes);
@@ -280,7 +281,6 @@ public class ConfirmationPage extends AppCompatActivity {
                             // If user has not signed up yet
                             else {
                                 startConditionalIntent(true);
-                                Log.d("etowsley", "User is not in signedUp");
 
                             }
                         }

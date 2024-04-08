@@ -157,14 +157,14 @@ public class EventActivity extends AppCompatActivity {
                 new DatePickerDialog.OnDateSetListener() {
                     @Override
                     public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
-                        calendar.set(Calendar.YEAR, year);
-                        calendar.set(Calendar.MONTH, month);
-                        calendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+                        calendar.set(Calendar.YEAR, year); // sets the year
+                        calendar.set(Calendar.MONTH, month); // sets the month
+                        calendar.set(Calendar.DAY_OF_MONTH, dayOfMonth); // sets the day
 
-                        showTimePickerDialog();
+                        showTimePickerDialog(); // shows the calender picker
                     }
                 }, year, month, dayOfMonth);
-        datePickerDialog.show();
+        datePickerDialog.show(); // displays the picker
     }
 
     private void showTimePickerDialog() {
@@ -191,9 +191,9 @@ public class EventActivity extends AppCompatActivity {
      */
     private String convertImageUriToString(Uri imageUri) {
         try {
-            InputStream inputStream = getContentResolver().openInputStream(imageUri);
-            Bitmap bitmap = BitmapFactory.decodeStream(inputStream);
-            ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+            InputStream inputStream = getContentResolver().openInputStream(imageUri); //geta input stream
+            Bitmap bitmap = BitmapFactory.decodeStream(inputStream); // gets bitmap from input stream
+            ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream(); // gets out put stream
             bitmap.compress(Bitmap.CompressFormat.JPEG, 100, byteArrayOutputStream);
             byte[] byteArray = byteArrayOutputStream.toByteArray();
             return Base64.encodeToString(byteArray, Base64.DEFAULT);
