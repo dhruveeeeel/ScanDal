@@ -209,31 +209,6 @@ public class EventDetailsActivity extends AppCompatActivity {
         });
     }
 
-    private void incrementAttendeeCount(String eventName) {
-        // Reference to the event document based on the event name
-        db.collection("events")
-                .whereEqualTo("name", eventName)
-                .limit(1)
-                .get()
-                .addOnSuccessListener(queryDocumentSnapshots -> {
-                    if (!queryDocumentSnapshots.isEmpty()) {
-                        DocumentSnapshot eventDocSnapshot = queryDocumentSnapshots.getDocuments().get(0);
-                        String eventDocId = eventDocSnapshot.getId();
-
-                        // Retrieve the current attendee count and increment it
-                        Number currentAttendeeCount = (Number) eventDocSnapshot.get("attendeeCount");
-                        int newAttendeeCount = currentAttendeeCount != null ? currentAttendeeCount.intValue() + 1 : 1;
-
-                        // Update the attendee count in the document
-                        db.collection("events").document(eventDocId)
-                                .update("attendeeCount", newAttendeeCount)
-                                .addOnSuccessListener(aVoid -> Log.d(TAG, "Attendee count incremented successfully"))
-                                .addOnFailureListener(e -> Log.e(TAG, "Error incrementing attendee count", e));
-                    }
-                })
-                .addOnFailureListener(e -> Log.e(TAG, "Error fetching event to increment attendee count", e));
-    }
-
     private void saveSignUpToAttendee(String eventName) {
         final String deviceId = Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID);
         final Map<String, Object> signedUp = new HashMap<>();
