@@ -179,7 +179,6 @@ public class EventActivity extends AppCompatActivity {
                         calendar.set(Calendar.MINUTE, minute);
 
                         // Do something with the selected date and time
-                        Toast.makeText(EventActivity.this, "Selected date and time: " + calendar.getTime(), Toast.LENGTH_LONG).show();
                         editEventTime.setText(String.valueOf(calendar.getTime()));
                     }
                 }, hourOfDay, minute, false);
