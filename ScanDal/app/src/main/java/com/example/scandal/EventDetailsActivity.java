@@ -65,6 +65,7 @@ public class EventDetailsActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        // initialize UI stuff
         setContentView(R.layout.view_event_page);
 
         textEventName_ViewEventPage = findViewById(R.id.textEventName_ViewEventPage);
@@ -76,30 +77,30 @@ public class EventDetailsActivity extends AppCompatActivity {
         buttonBack_ViewEventPage = findViewById(R.id.buttonBack_ViewEventPage);
         buttonSignUp = findViewById(R.id.buttonSignUp);
         button_seeQR = findViewById(R.id.button_seeQRCode);
-        db = FirebaseFirestore.getInstance();
+        db = FirebaseFirestore.getInstance(); // gets DB instance
 
-        buttonBack_ViewEventPage.setOnClickListener(v -> finish());
+        buttonBack_ViewEventPage.setOnClickListener(v -> finish()); // back button
 
 
         Intent intent = getIntent();
         // Retrieve the event name from the intent
         eventName = intent.getStringExtra("eventName");
-        final String deviceId = Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID);
+        final String deviceId = Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID); // gets device ID
 
-        final Map<String, String> checkedInStatus = new HashMap<>();
-        checkedInStatus.put(deviceId, "No");
-        if (intent.getExtras().containsKey("check")){
-            if (imageString!="") {
+        final Map<String, String> checkedInStatus = new HashMap<>(); // for db push
+        checkedInStatus.put(deviceId, "No"); // sets device ID "No" as the status in the hash map
+        if (intent.getExtras().containsKey("check")){ // checks if called from confirm page
+            if (imageString!="") { // if confirm page grabs all the UI components from intents and attributes
                 Bitmap posterBitmap = convertImageStringToBitmap(imageString);
-                imageView.setImageBitmap(posterBitmap);
+                imageView.setImageBitmap(posterBitmap); // sets poster
             }
             textEventLocation_ViewEventPage.setText(getIntent().getStringExtra("location")); //gets the location
             textEventTime_ViewEventPage.setText(getIntent().getStringExtra("time")); // gets the time
             textEventDescription_ViewEventPage.setText(getIntent().getStringExtra("description")); // gets description
             textEventName_ViewEventPage.setText(getIntent().getStringExtra("name")); // gets the name
-            checkInQRCode = intent.getStringExtra("checkin");
-            promoQRCode = intent.getStringExtra("promo");
-            eventName = intent.getStringExtra("name");
+            checkInQRCode = intent.getStringExtra("checkin"); // gets checkin token
+            promoQRCode = intent.getStringExtra("promo"); // gets promo token
+            eventName = intent.getStringExtra("name"); // inits the events name
             if (getIntent().getStringExtra("check").equals("1")){
                 buttonSignUp.setVisibility(View.INVISIBLE); // if checked in no sign up button is provided
             }
@@ -108,7 +109,7 @@ public class EventDetailsActivity extends AppCompatActivity {
                 buttonSignUp.setVisibility(View.VISIBLE); // if checked in no sign up button is provided
                 Log.e("etowsley", "This code is being accessed");
             }
-        }else {
+        }else { // if not from the confirm page init UI with db components from the event name
             db.collection("events")
                     .whereEqualTo("name", eventName)
                     .limit(1)
@@ -118,14 +119,14 @@ public class EventDetailsActivity extends AppCompatActivity {
                         DocumentSnapshot documentSnapshot = queryDocumentSnapshots.getDocuments().get(0);
                         Map<String, Object> eventData = documentSnapshot.getData();
                         if (eventData != null) {
-                            textEventName_ViewEventPage.setText((String) eventData.get("name"));
-                            textEventTime_ViewEventPage.setText((String) eventData.get("time"));
-                            textEventLocation_ViewEventPage.setText((String) eventData.get("location"));
-                            textEventDescription_ViewEventPage.setText((String) eventData.get("description"));
-                            promoQRCode = (String) eventData.get("promoToken");
+                            textEventName_ViewEventPage.setText((String) eventData.get("name"));// gets name
+                            textEventTime_ViewEventPage.setText((String) eventData.get("time")); // gets time
+                            textEventLocation_ViewEventPage.setText((String) eventData.get("location")); // gets location
+                            textEventDescription_ViewEventPage.setText((String) eventData.get("description")); // gets description
+                            promoQRCode = (String) eventData.get("promoToken");// gets tokens
                             checkInQRCode = (String) eventData.get("checkinToken");
 
-
+                            //gets poster if there is one uploaded
                             String imageString = (String) eventData.get("posterImage");
                             if (imageString != null) {
                                 Bitmap bitmap = convertImageStringToBitmap(imageString);
@@ -138,17 +139,18 @@ public class EventDetailsActivity extends AppCompatActivity {
                     })
                     .addOnFailureListener(e -> Toast.makeText(getApplicationContext(), "Failed to fetch profile data", Toast.LENGTH_SHORT).show());
         }
+        // button directs to a page to view and share the QR codes
         button_seeQR.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Log.e("etowsley", "SeeQRCode Button pushed");
                 Intent myIntent = new Intent(EventDetailsActivity.this, NewEventActivity.class);
-                myIntent.putExtra("source", "EventDetails");
+                myIntent.putExtra("source", "EventDetails"); // initializing intents for the next page
                 myIntent.putExtra("CheckInQRCodeEventDetails", checkInQRCode);
                 if (checkInQRCode != null) {
                     Log.e("etowsley", "checkInQRCode is not null");
                     myIntent.putExtra("PromoQRCodeEventDetails", promoQRCode);
-                    startActivity(myIntent);
+                    startActivity(myIntent); // starts the QR view page
                     Log.e("etowsley", "Intent was started");
                 }
             }
@@ -205,31 +207,6 @@ public class EventDetailsActivity extends AppCompatActivity {
                     })
                     .addOnFailureListener(e -> Toast.makeText(getApplicationContext(), "Failed to fetch profile data", Toast.LENGTH_SHORT).show());
         });
-    }
-
-    private void incrementAttendeeCount(String eventName) {
-        // Reference to the event document based on the event name
-        db.collection("events")
-                .whereEqualTo("name", eventName)
-                .limit(1)
-                .get()
-                .addOnSuccessListener(queryDocumentSnapshots -> {
-                    if (!queryDocumentSnapshots.isEmpty()) {
-                        DocumentSnapshot eventDocSnapshot = queryDocumentSnapshots.getDocuments().get(0);
-                        String eventDocId = eventDocSnapshot.getId();
-
-                        // Retrieve the current attendee count and increment it
-                        Number currentAttendeeCount = (Number) eventDocSnapshot.get("attendeeCount");
-                        int newAttendeeCount = currentAttendeeCount != null ? currentAttendeeCount.intValue() + 1 : 1;
-
-                        // Update the attendee count in the document
-                        db.collection("events").document(eventDocId)
-                                .update("attendeeCount", newAttendeeCount)
-                                .addOnSuccessListener(aVoid -> Log.d(TAG, "Attendee count incremented successfully"))
-                                .addOnFailureListener(e -> Log.e(TAG, "Error incrementing attendee count", e));
-                    }
-                })
-                .addOnFailureListener(e -> Log.e(TAG, "Error fetching event to increment attendee count", e));
     }
 
     private void saveSignUpToAttendee(String eventName) {
@@ -383,7 +360,7 @@ public class EventDetailsActivity extends AppCompatActivity {
 
     private void checkAndSendMilestoneNotification(double capacityPercentage, String eventName, String documentId) {
         String milestoneKey;
-
+        // checks milestone percentages
         if (capacityPercentage >= 100) {
             milestoneKey = "100";
         } else if (capacityPercentage >= 80) {
@@ -426,6 +403,7 @@ public class EventDetailsActivity extends AppCompatActivity {
         String milestoneKey;
 
         //Adjusted for milestones to function if no attendeeLimit has been set.
+        // checks milestone count range
         if (attendeeCount >= 20) {
             milestoneKey = "20";
         } else if (attendeeCount >= 15) {

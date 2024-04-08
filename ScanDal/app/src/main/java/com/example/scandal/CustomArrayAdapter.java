@@ -46,9 +46,9 @@ public class CustomArrayAdapter extends ArrayAdapter<Pair<String, String>> {
      */
     public CustomArrayAdapter(@NonNull Context context, int resource, @NonNull List<Pair<String, String>> objects) {
         super(context, resource, objects);
-        this.context = context;
-        this.objects = objects;
-        this.resource = resource;
+        this.context = context; // stores event context
+        this.objects = objects; // gets the objects
+        this.resource = resource; // gets the resource
     }
 
     /**
@@ -90,6 +90,7 @@ public class CustomArrayAdapter extends ArrayAdapter<Pair<String, String>> {
         // Set different background color for the first TextView
         if (position == 0) {
             try {
+                // sets UI to look right
                 text1.setTextColor(ContextCompat.getColor(context, R.color.teal_A400));
                 text1.setTextSize(20);
                 text2.setTextColor(ContextCompat.getColor(context, R.color.teal_A400));
@@ -103,7 +104,7 @@ public class CustomArrayAdapter extends ArrayAdapter<Pair<String, String>> {
                 @Override
                 public void onClick(View v) {
                     if (listener != null) {
-                        listener.onItemClick(position);
+                        listener.onItemClick(position); // handles item clicks
                     }
                 }
             });

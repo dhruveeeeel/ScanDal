@@ -24,13 +24,14 @@ public class AttendeeAnnouncements extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        // inits UI components
         setContentView(R.layout.my_events_page); // Assuming this layout fits the purpose
         TextView txtMyEvents = findViewById(R.id.list_view_header);
         txtMyEvents.setText("Announcements");
         backMain = findViewById(R.id.buttonBack_MyEventsPage);
         announcementList = findViewById(R.id.listView_MyEventsPage);
-        db = FirebaseFirestore.getInstance();
-
+        db = FirebaseFirestore.getInstance(); // gets db instance
+        //back button finishes the activity
         backMain.setOnClickListener(v -> finish());
 
         // Retrieve the event name from the intent
@@ -52,13 +53,13 @@ public class AttendeeAnnouncements extends AppCompatActivity {
                 .get()
                 .addOnSuccessListener(queryDocumentSnapshots -> {
                     for (QueryDocumentSnapshot documentSnapshot : queryDocumentSnapshots) {
-                        Map<String, Object> eventData = documentSnapshot.getData();
-                        if (eventData != null && eventData.containsKey("announcements")) {
-                            Map<String, String> eventAnnouncements = (Map<String, String>) eventData.get("announcements");
-                            for (Map.Entry<String, String> entry : eventAnnouncements.entrySet()) {
+                        Map<String, Object> eventData = documentSnapshot.getData(); // gets the data
+                        if (eventData != null && eventData.containsKey("announcements")) { // checks the announcements
+                            Map<String, String> eventAnnouncements = (Map<String, String>) eventData.get("announcements");// grabs if the exist
+                            for (Map.Entry<String, String> entry : eventAnnouncements.entrySet()) { // loops through the announcements
                                 String announcementEntry = entry.getKey() + ": " + entry.getValue();
-                                announcements.add(announcementEntry);
-                                adapter.notifyDataSetChanged();
+                                announcements.add(announcementEntry); // adds to the list
+                                adapter.notifyDataSetChanged(); // notifies of changes
                             }
                         }
                     }

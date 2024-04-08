@@ -52,8 +52,8 @@ public class CustomImageAdapter extends ArrayAdapter<Bitmap> {
         }
 
         ImageView imageView = listItem.findViewById(R.id.imageView);
-        Bitmap currentImage = mImages.get(position);
-        imageView.setImageBitmap(currentImage);
+        Bitmap currentImage = mImages.get(position); // gets image
+        imageView.setImageBitmap(currentImage); // sets UI
 
         return listItem;
     }

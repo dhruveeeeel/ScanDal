@@ -50,17 +50,19 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     protected void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
+        // inits UI components
         setContentView(R.layout.google_map_view);
 
-        attendeeName = getIntent().getStringExtra("attendeeName");
+        attendeeName = getIntent().getStringExtra("attendeeName"); // gets the name based by previous act
 
         backBtn = findViewById(R.id.buttonBack_GoogleMapView);
+        // back button finishes activity
         backBtn.setOnClickListener(v -> finish());
 
 
 
-        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
-        mapFragment.getMapAsync(MapActivity.this);
+        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map); // inits fragment for map
+        mapFragment.getMapAsync(MapActivity.this);  // gets map
 
 
 
@@ -76,7 +78,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     public void onMapReady(@NonNull GoogleMap googleMap) {
         myMap = googleMap;
 
-        db = FirebaseFirestore.getInstance();
+        db = FirebaseFirestore.getInstance(); // gets DB
         db.collection("profiles")
                 .whereEqualTo("name", attendeeName)
                 .limit(1)

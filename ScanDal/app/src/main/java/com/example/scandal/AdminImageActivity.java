@@ -44,17 +44,18 @@ public class AdminImageActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        //inits UI
         setContentView(R.layout.admin_image_list_page);
 
         listView = findViewById(R.id.listView_ImageListPage);
         backToHomepage = findViewById(R.id.buttonBack_ImageListPage);
 
-        db = FirebaseFirestore.getInstance();
+        db = FirebaseFirestore.getInstance(); // gets DB instance
         adapter = new CustomImageAdapter(this, imagesList); // Initialize the custom adapter
         listView.setAdapter(adapter); // Set the adapter to the ListView
 
-        loadImages();
-
+        loadImages(); // loads the images
+        // goes back to the Admin activity
         backToHomepage.setOnClickListener(v -> {
             Intent intent = new Intent(AdminImageActivity.this, AdminActivity.class);
             startActivity(intent);
@@ -86,15 +87,15 @@ public class AdminImageActivity extends AppCompatActivity {
         // Load images from 'events' collection
         db.collection("events").get().addOnCompleteListener(task -> {
             if (task.isSuccessful()) {
-                imagesList.clear();
+                imagesList.clear(); // clears the global vars
                 imageIds.clear();
                 for (QueryDocumentSnapshot document : task.getResult()) {
-                    String imageString = document.getString("posterImage");
+                    String imageString = document.getString("posterImage"); //gets the posterimages for the events
                     if (imageString != null && !imageString.isEmpty()) {
-                        Bitmap bitmap = convertImageStringToBitmap(imageString);
+                        Bitmap bitmap = convertImageStringToBitmap(imageString); //gets the bitmap
                         if (bitmap != null) {
-                            imagesList.add(bitmap);
-                            imageIds.add(document.getId());
+                            imagesList.add(bitmap); // adds bitmap to list
+                            imageIds.add(document.getId()); // Add document ID for deletion
                         }
                     }
                 }

@@ -66,6 +66,7 @@ public class HomeActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        // inits UI components
         setContentView(R.layout.qr_scanning_page);
         profile = findViewById(R.id.profilePicture);
         scan = findViewById(R.id.buttonScanQRCode);
@@ -79,10 +80,10 @@ public class HomeActivity extends AppCompatActivity {
         // check if there is a non empty profile picture
         // get profile picture from database
         FirebaseFirestore db;
-        db = FirebaseFirestore.getInstance();
+        db = FirebaseFirestore.getInstance(); //gets DB
         final String deviceId = Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID);
         db.collection("profiles")
-                .whereEqualTo("deviceId", deviceId)
+                .whereEqualTo("deviceId", deviceId)// gets the users profile data
                 .limit(1)
                 .get()
                 .addOnSuccessListener(queryDocumentSnapshots -> {
@@ -91,7 +92,7 @@ public class HomeActivity extends AppCompatActivity {
                         DocumentSnapshot documentSnapshot = queryDocumentSnapshots.getDocuments().get(0);
                         Map<String, Object> profileData = documentSnapshot.getData();
                         if (profileData != null) {
-                            String imageString = (String) profileData.get("imageString");
+                            String imageString = (String) profileData.get("imageString"); //gets the users profile
                             if (imageString != null) {
                                 Bitmap bitmap = convertImageStringToBitmap(imageString);
                                 if (bitmap != null) {
@@ -101,11 +102,11 @@ public class HomeActivity extends AppCompatActivity {
                         }
                     } else {
                         // Device is not registered, let the user enter new information
-                        Toast.makeText(getApplicationContext(), "Profile does not exist", Toast.LENGTH_SHORT).show();
+                        //Toast.makeText(getApplicationContext(), "Profile does not exist", Toast.LENGTH_SHORT).show();
                     }
                 })
                 .addOnFailureListener(e -> Toast.makeText(getApplicationContext(), "Failed to fetch profile data", Toast.LENGTH_SHORT).show());
-
+        // goes to settings
         settings.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -113,6 +114,7 @@ public class HomeActivity extends AppCompatActivity {
                 startActivity(myintent);
             }
         });
+        // goes to event browser
         eventBrowser.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -120,8 +122,7 @@ public class HomeActivity extends AppCompatActivity {
                 startActivity(myintent);
             }
         });
-        //Log.e("hpeebles", "Inside HomeAct Before Attendee events");
-
+        //goes to Attendee events list
         attendeeEvents.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -130,22 +131,17 @@ public class HomeActivity extends AppCompatActivity {
             }
         });
         //Log.e("hpeebles", "Inside HomeAct After Attendee events");
-
+        //goes to scanner
         scan.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent myintent = new Intent(HomeActivity.this, QRCodeScanner.class);
-                myintent.putExtra("Activity", 1);
+                myintent.putExtra("Activity", 1); // sets the flag to indicate main activity
                 startActivity(myintent);
             }
         });
 
-//        scan.setOnClickListener(view -> {
-//            Intent myintent = new Intent(HomeActivity.this, QRCodeScanner.class);
-//            myintent.putExtra("Activity", 1);
-//            startActivity(myintent);
-//        });
-        //Log.e("hpeebles", "Inside HomeAct");
+        // goes to the profile page
         profile.setOnClickListener(view -> {
             Intent myintent = new Intent(HomeActivity.this, ProfileActivity.class);
             startActivity(myintent);
@@ -157,6 +153,12 @@ public class HomeActivity extends AppCompatActivity {
         });
 
     }
+
+    /**
+     * converts image string to bitmap
+     * @param imageString the string image being converted
+     * @return bitmap of the string
+     */
     private Bitmap convertImageStringToBitmap(String imageString) {
         try {
             byte[] decodedString = Base64.decode(imageString, Base64.DEFAULT);
@@ -168,7 +170,7 @@ public class HomeActivity extends AppCompatActivity {
     }
 
 
-    //Helper function to prompt user for admin password
+    //Helper method to prompt user for admin password
     private void showAdminPasswordDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("Enter Admin Pin");
