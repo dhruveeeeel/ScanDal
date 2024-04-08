@@ -84,6 +84,7 @@ public class AdminImageActivity extends AppCompatActivity {
      * Fetches images and their document IDs from Firestore, and updates the adapter.
      */
     private void loadImages() {
+        // Load images from 'events' collection
         db.collection("events").get().addOnCompleteListener(task -> {
             if (task.isSuccessful()) {
                 imagesList.clear(); // clears the global vars
@@ -98,12 +99,30 @@ public class AdminImageActivity extends AppCompatActivity {
                         }
                     }
                 }
-                adapter.notifyDataSetChanged(); // Notify the adapter that the dataset has changed
+                // Now, load images from 'profiles' collection
+                db.collection("profiles").get().addOnCompleteListener(profileTask -> {
+                    if (profileTask.isSuccessful()) {
+                        for (QueryDocumentSnapshot profileDocument : profileTask.getResult()) {
+                            String profileImageString = profileDocument.getString("imageString");
+                            if (profileImageString != null && !profileImageString.isEmpty()) {
+                                Bitmap bitmap = convertImageStringToBitmap(profileImageString);
+                                if (bitmap != null) {
+                                    imagesList.add(bitmap);
+                                    // Assuming profile document IDs are also needed
+                                    imageIds.add(profileDocument.getId());
+                                }
+                            }
+                        }
+                        adapter.notifyDataSetChanged(); // Notify adapter after loading from both collections
+                    }
+                });
             } else {
-                // Handle the error
+                // Handle the error for 'events' collection loading failure
             }
         });
     }
+
+
     /**
      * Delete an image from Firestore.
      * Deletes the image with the given document ID from Firestore,
@@ -112,11 +131,19 @@ public class AdminImageActivity extends AppCompatActivity {
      * @param imageId  The document ID of the image to delete.
      */
     private void deleteImage(String imageId) {
+        // Attempt to clear the image in the 'events' collection
         db.collection("events").document(imageId)
                 .update("posterImage", "")
-                .addOnSuccessListener(aVoid -> Log.d("AdminImageActivity", "Image deleted successfully")) // deletes image
-                .addOnFailureListener(e -> Log.e("AdminImageActivity", "Error deleting image: " + e.getMessage()));
+                .addOnSuccessListener(aVoid -> Log.d("AdminImageActivity", "Image potentially cleared from events"))
+                .addOnFailureListener(e -> Log.d("AdminImageActivity", "Image not found or error clearing from events: " + e.getMessage()));
+
+        // Attempt to clear the image in the 'profiles' collection
+        db.collection("profiles").document(imageId)
+                .update("imageString", "")
+                .addOnSuccessListener(aVoid -> Log.d("AdminImageActivity", "Image potentially cleared from profiles"))
+                .addOnFailureListener(e -> Log.d("AdminImageActivity", "Image not found or error clearing from profiles: " + e.getMessage()));
     }
+
     /**
      * Convert a Base64-encoded image string to a Bitmap.
      *
