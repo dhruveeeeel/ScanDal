@@ -66,6 +66,7 @@ public class HomeActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        // inits UI components
         setContentView(R.layout.qr_scanning_page);
         profile = findViewById(R.id.profilePicture);
         scan = findViewById(R.id.buttonScanQRCode);
@@ -79,10 +80,10 @@ public class HomeActivity extends AppCompatActivity {
         // check if there is a non empty profile picture
         // get profile picture from database
         FirebaseFirestore db;
-        db = FirebaseFirestore.getInstance();
+        db = FirebaseFirestore.getInstance(); //gets DB
         final String deviceId = Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID);
         db.collection("profiles")
-                .whereEqualTo("deviceId", deviceId)
+                .whereEqualTo("deviceId", deviceId)// gets the users profile data
                 .limit(1)
                 .get()
                 .addOnSuccessListener(queryDocumentSnapshots -> {
@@ -91,7 +92,7 @@ public class HomeActivity extends AppCompatActivity {
                         DocumentSnapshot documentSnapshot = queryDocumentSnapshots.getDocuments().get(0);
                         Map<String, Object> profileData = documentSnapshot.getData();
                         if (profileData != null) {
-                            String imageString = (String) profileData.get("imageString");
+                            String imageString = (String) profileData.get("imageString"); //gets the users profile
                             if (imageString != null) {
                                 Bitmap bitmap = convertImageStringToBitmap(imageString);
                                 if (bitmap != null) {

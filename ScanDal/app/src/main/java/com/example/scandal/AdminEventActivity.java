@@ -73,34 +73,36 @@ public class AdminEventActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.admin_events_page);
 
-        db = FirebaseFirestore.getInstance();
+        db = FirebaseFirestore.getInstance(); // gets db instance
+        // inits UI
         eventsList = findViewById(R.id.eventsList_AdminEventsPage);
         backToAdmin = findViewById(R.id.buttonBack_AdminEventsPage);
         buttonDelete = findViewById(R.id.buttonDelete_AdminEventPage);
 
-        // Initialize your adapter and eventNames list here
+        // Initializes adapter and eventNames list here
         eventNames = new ArrayList<>();
         adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, eventNames);
         eventsList.setAdapter(adapter);
-
+        // sends back to the admin activity
         backToAdmin.setOnClickListener(v->{
             Intent intent = new Intent(AdminEventActivity.this, AdminActivity.class);
             startActivity(intent);
         });
-        loadEvents();
+        loadEvents(); // loads events
 
         // Set an item click listener to delete the event on click
         eventsList.setOnItemClickListener((parent, view, position, id) -> {
-            eventName = (String) parent.getItemAtPosition(position);
-            eventId = eventNameToId.get(eventName);
+            eventName = (String) parent.getItemAtPosition(position); // sets the clicked event as the current event
+            eventId = eventNameToId.get(eventName); // gets events ID
             Toast.makeText(AdminEventActivity.this, eventName+" is selected", Toast.LENGTH_SHORT).show();
 
         });
+        // deletes an event
         buttonDelete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 if (eventId != null) {
-                    showDeleteConfirmationDialog(eventId, eventName);
+                    showDeleteConfirmationDialog(eventId, eventName); // deletes the event
                 }
             }
         });
@@ -116,7 +118,7 @@ public class AdminEventActivity extends AppCompatActivity {
                 for (QueryDocumentSnapshot document : task.getResult()) {
                     String eventName = document.getString("name");
                     if (eventName != null) {
-                        eventNames.add(eventName);
+                        eventNames.add(eventName); // adds the event to th eevent list
                         eventNameToId.put(eventName, document.getId());
                     }
                 }
@@ -146,13 +148,13 @@ public class AdminEventActivity extends AppCompatActivity {
     private void showDeleteConfirmationDialog(String eventId, String eventName) {
         new AlertDialog.Builder(this)
                 .setTitle("Delete Event")
-                .setMessage("Are you sure you want to delete " + eventName + "?")
-                .setPositiveButton(android.R.string.yes, (dialog, which) -> deleteEvent(eventId))
-                .setNegativeButton(android.R.string.no, null)
+                .setMessage("Are you sure you want to delete " + eventName + "?") // comfirms delete
+                .setPositiveButton(android.R.string.yes, (dialog, which) -> deleteEvent(eventId)) // deletes event
+                .setNegativeButton(android.R.string.no, null) // does nothing if no
                 .setIcon(android.R.drawable.ic_dialog_alert)
                 .show();
     }
-
+    // testing method
     public void injectFirestore(FirebaseFirestore mockFirestore) {
         FirebaseFirestore mockDb = null;
         this.db = mockDb;

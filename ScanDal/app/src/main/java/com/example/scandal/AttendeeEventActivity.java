@@ -5,21 +5,10 @@ import android.os.Bundle;
 import android.provider.Settings;
 import android.util.Log;
 import android.util.Pair;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
+
 import android.widget.FrameLayout;
 import android.widget.ListView;
-import android.widget.TextView;
-import android.widget.Toast;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.content.ContextCompat;
-
-import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 
@@ -62,12 +51,13 @@ public class AttendeeEventActivity extends AppCompatActivity implements CustomAr
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        //inits UI components
         setContentView(R.layout.my_events_page);
 
         backMain = findViewById(R.id.buttonBack_MyEventsPage);
         eventsList = findViewById(R.id.listView_MyEventsPage);
-        db = FirebaseFirestore.getInstance();
-
+        db = FirebaseFirestore.getInstance(); // gets DB
+        // back button finishes activity
         backMain.setOnClickListener(v -> finish());
 
         //Initialize Adapter
@@ -76,8 +66,8 @@ public class AttendeeEventActivity extends AppCompatActivity implements CustomAr
         adapter.setOnItemClickListener(AttendeeEventActivity.this);
         eventsList.setAdapter(adapter);
         if (!eventsLoaded) {
-            loadEvents();
-            eventsLoaded = true;
+            loadEvents(); // loads events
+            eventsLoaded = true; // sets flag
         }
 
     }
@@ -85,14 +75,14 @@ public class AttendeeEventActivity extends AppCompatActivity implements CustomAr
      * Retrieves and displays event pulled from firebase
      */
     private String getCheckedInEventName() {
-        final String deviceId = Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID);
+        final String deviceId = Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID); // gets the device ID
         final String[] checkedInEventName = new String[1];
         db.collection("events")
                 .get()
                 .addOnSuccessListener(queryDocumentSnapshots -> {
                     for (QueryDocumentSnapshot documentSnapshot : queryDocumentSnapshots) {
-                        Map<String, Object> eventData = documentSnapshot.getData();
-                        if (eventData.containsKey("checkedIn")) {
+                        Map<String, Object> eventData = documentSnapshot.getData(); // gets data
+                        if (eventData.containsKey("checkedIn")) { // checks if checkedIn exist yet
                             List<String> checkedInUsers = (List<String>) eventData.get("checkedIn");
                             if (checkedInUsers.contains(deviceId)) {
                                 // Assuming each event document has a 'name' field
@@ -106,7 +96,7 @@ public class AttendeeEventActivity extends AppCompatActivity implements CustomAr
         if (checkedInEventName[0] == null) {
             Log.e("etowsley", "checkInEventName was null");
         }
-        return checkedInEventName[0];
+        return checkedInEventName[0]; //
     }
     //Causes events to load twice
     @Override

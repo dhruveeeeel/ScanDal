@@ -82,7 +82,7 @@ public class AdminProfileActivity extends AppCompatActivity {
         setContentView(R.layout.admin_profile_list); // Use profile_list.xml
 
 
-        db = FirebaseFirestore.getInstance();
+        db = FirebaseFirestore.getInstance(); //gets db instance
         profilesList = findViewById(R.id.profilesList_AdminProfilePage);
         backToAdmin = findViewById(R.id.buttonBack_AdminProfilePage);
         buttonDelete = findViewById(R.id.buttonDelete_AdminProfileListPage);
@@ -104,11 +104,12 @@ public class AdminProfileActivity extends AppCompatActivity {
             profileId = profileNameToId.get(profileName);
             Toast.makeText(AdminProfileActivity.this, profileName+" is selected", Toast.LENGTH_SHORT).show();
         });
+        //deletes a profile
         buttonDelete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 if (profileId != null) {
-                    showDeleteConfirmationDialog(profileId, profileName);
+                    showDeleteConfirmationDialog(profileId, profileName); // gets the profile selected and deletes it
                 }
             }
         });
@@ -158,10 +159,10 @@ public class AdminProfileActivity extends AppCompatActivity {
                 .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
-                        deleteProfile(profileId);
+                        deleteProfile(profileId); // if yes delete the profile
                     }
                 })
-                .setNegativeButton(android.R.string.no, null)
+                .setNegativeButton(android.R.string.no, null) // if no dont delete
                 .setIcon(android.R.drawable.ic_dialog_alert)
                 .show();
     }
