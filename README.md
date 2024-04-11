@@ -5,5 +5,6 @@
 ScanDal is an event management system where attendees check in using QR codes on their mobile devices. Organizers can track attendance, manage event details, and send notifications.  
 
 # Demo video
-https://github.com/CMPUT301W24T28/ScanDal/assets/94323752/a1f62b2a-f1c7-42c6-928a-dd8760d15afc  
+https://github.com/CMPUT301W24T28/ScanDal/assets/94323752/a1f62b2a-f1c7-42c6-928a-dd8760d15afc
+
 https://drive.google.com/file/d/1309fCuo0Jzk9QR9NSC1wJLzQP_NRhVl6/view?usp=sharing
